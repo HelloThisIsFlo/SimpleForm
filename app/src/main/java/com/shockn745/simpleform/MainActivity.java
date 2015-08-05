@@ -1,6 +1,7 @@
 package com.shockn745.simpleform;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -18,6 +19,10 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+
+    public final static String NAME_KEY = "name";
+    public final static String SURNAME_KEY = "surname";
+    public final static String BIRTHDAY_KEY = "birthday";
 
     private EditText mNameEditText;
     private EditText mSurnameEditText;
@@ -48,8 +53,14 @@ public class MainActivity extends AppCompatActivity {
         mOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String nom = mNameEditText.getText().toString();
-                Toast.makeText(MainActivity.this, nom, Toast.LENGTH_SHORT).show();
+
+                //Start result activity
+                Intent startResult = new Intent(MainActivity.this, ResultActivity.class);
+                startResult.putExtra(NAME_KEY, mNameEditText.getText().toString().trim());
+                startResult.putExtra(SURNAME_KEY, mSurnameEditText.getText().toString().trim());
+                startResult.putExtra(BIRTHDAY_KEY, mCalendar.getTimeInMillis());
+
+                startActivity(startResult);
             }
         });
 
@@ -80,7 +91,6 @@ public class MainActivity extends AppCompatActivity {
                 updateLabel();
 
                 // Check age
-                // TODO Check age
                 if (mCalendar.compareTo(requiredDate) <= 0) {
                     // Age > 18
                     ageOver18 = true;
@@ -159,9 +169,12 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
         });
     }
 }
