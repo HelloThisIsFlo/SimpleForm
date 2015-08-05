@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -58,6 +59,10 @@ public class MainActivity extends AppCompatActivity {
         // Show DatePicker when click on Birthday Field //
         //////////////////////////////////////////////////
 
+        // Set the required date for age check
+        final Calendar requiredDate = Calendar.getInstance();
+        requiredDate.add(Calendar.YEAR, -18);
+
         // Create the listener
         final DatePickerDialog.OnDateSetListener dateListener =
                 new DatePickerDialog.OnDateSetListener() {
@@ -76,10 +81,9 @@ public class MainActivity extends AppCompatActivity {
 
                 // Check age
                 // TODO Check age
-                if (true) {
+                if (mCalendar.compareTo(requiredDate) <= 0) {
                     // Age > 18
                     ageOver18 = true;
-                    activateButtonIfValidInput();
                 } else {
                     // Age < 18
                     ageOver18 = false;
@@ -89,6 +93,9 @@ public class MainActivity extends AppCompatActivity {
                             Toast.LENGTH_LONG
                     ).show();
                 }
+                activateButtonIfValidInput();
+
+
             }
 
         };
@@ -112,14 +119,13 @@ public class MainActivity extends AppCompatActivity {
      * Used when a date is set.
      */
     private void updateLabel(){
-        String myFormat = "MM/dd/yy"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+        DateFormat dateFormat = DateFormat.getDateInstance();
 
         // Check if calendar is set to prevent IllegalArgumentException
         if (mCalendar.isSet(Calendar.YEAR)
                 && mCalendar.isSet(Calendar.MONTH)
                 && mCalendar.isSet(Calendar.DAY_OF_MONTH)) {
-            mBirthdayTextView.setText(sdf.format(mCalendar.getTime()));
+            mBirthdayTextView.setText(dateFormat.format(mCalendar.getTime()));
         }
     }
 
