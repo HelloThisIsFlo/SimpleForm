@@ -1,22 +1,23 @@
-package com.shockn745.simpleform;
+package com.shockn745.simpleform.main;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewTreeObserver;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.shockn745.simpleform.R;
+import com.shockn745.simpleform.result.ResultActivity;
+
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,10 +28,12 @@ public class MainActivity extends AppCompatActivity {
     private EditText mNameEditText;
     private EditText mSurnameEditText;
     private EditText mBirthdayTextView;
-    private Button mOkButton;
+    private FloatingActionButton mOkButton;
 
     private Calendar mCalendar;
     private boolean ageOver18 = false;
+
+    private FabAnimator mFabAnimator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,16 +47,28 @@ public class MainActivity extends AppCompatActivity {
         mNameEditText = (EditText) findViewById(R.id.name_edit_text);
         mSurnameEditText = (EditText) findViewById(R.id.surname_edit_text);
         mBirthdayTextView = (EditText) findViewById(R.id.birthday_edit_text);
-        mOkButton = (Button) findViewById(R.id.ok_button);
+        mOkButton = (FloatingActionButton) findViewById(R.id.ok_button);
 
         // Init the editText
         initEditText(mNameEditText);
         initEditText(mSurnameEditText);
 
+        // Init FAB animator & hide FAB when layout has been done
+        // Used deprecated method to support API 15
+        mOkButton.getViewTreeObserver()
+                .addOnGlobalLayoutListener(
+                        new ViewTreeObserver.OnGlobalLayoutListener() {
+                            @Override
+                            public void onGlobalLayout() {
+                                mOkButton.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                                mFabAnimator = new FabAnimator(MainActivity.this, mOkButton);
+                                mFabAnimator.initFAB();
+                            }
+                        }
+                );
         mOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 //Start result activity
                 Intent startResult = new Intent(MainActivity.this, ResultActivity.class);
                 startResult.putExtra(NAME_KEY, mNameEditText.getText().toString().trim());
@@ -150,9 +165,9 @@ public class MainActivity extends AppCompatActivity {
         if (mNameEditText.getText().length() != 0
                 && mSurnameEditText.getText().length() != 0
                 && ageOver18) {
-            mOkButton.setEnabled(true);
+            mFabAnimator.showFAB();
         } else {
-            mOkButton.setEnabled(false);
+            mFabAnimator.hideFAB();
         }
     }
 
@@ -177,4 +192,5 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 }

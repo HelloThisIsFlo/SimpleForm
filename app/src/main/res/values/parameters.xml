@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="card_add_anim_duration">500</integer>
+    <integer name="card_remove_anim_duration">500</integer>
+
+    <integer name="scheduler_add_duration">750</integer>
+</resources>
